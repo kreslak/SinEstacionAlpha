@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PlayerMovement : NetworkObject
+public class PlayerMovement : NetworkBehaviour
 {
     [Header("Movement")]
     float moveSpeed;
@@ -25,7 +25,7 @@ public class PlayerMovement : NetworkObject
     public LayerMask whatIsGround;
     bool grounded;
 
-    [SerializeField] Transform orientation;
+    [SerializeField] Transform orient;
     Vector3 moveDir;
     Rigidbody rb;
 
@@ -40,7 +40,7 @@ public class PlayerMovement : NetworkObject
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canJump = true;
-        orientation = GameObject.Find("orient").transform;
+        orient = GameObject.Find("orient").transform;
     }
 
     private void Update()
@@ -49,37 +49,68 @@ public class PlayerMovement : NetworkObject
         ApplyDrag();
     }
 
-    public void ProcessInput(NetworkInputData inputData)
+    public override void FixedUpdateNetwork()
     {
-        moveDir = orientation.forward * inputData.moveInput.z + orientation.right * inputData.moveInput.x;
+        if (GetInput(out NetworkInputData inputData))
+        {
+            // Movimiento
+            MovePlayer(inputData);
+            StateHandler(inputData);
+
+            // Control de salto
+            if (inputData.isJumping && canJump && grounded)
+            {
+                canJump = false;
+                Jump();
+                Runner.Invoke(nameof(JumpReset), jumpCd);
+            }
+        }
+
+        if (rb.velocity.y < 0)
+        {
+            rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Runner.DeltaTime;
+        }
+        else if (rb.velocity.y > 0 && !inputData.isJumping)
+        {
+            rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Runner.DeltaTime;
+        }
 
         if (grounded)
-        {
-            rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
-        }
+            rb.drag = groundDrag;
         else
-        {
+            rb.drag = 0;
+    }
+    void MovePlayer(NetworkInputData inputData)
+    {
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+
+        if(orient!=null)
+            moveDir = orient.forward * inputData.moveInput.y + orient.right * inputData.moveInput.x;
+
+        if (grounded)
+            rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+        else if (!grounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMult, ForceMode.Force);
-        }
+    }
 
-        if (inputData.isJumping && canJump && grounded)
+    void StateHandler(NetworkInputData inputData)
+    {
+        if (grounded && inputData.isSprinting)
         {
-            canJump = false;
-            Jump();
-            Invoke(nameof(JumpReset), jumpCd);
-        }
-
-        if (inputData.isSprinting)
-        {
+            State = MoveState.sprinting;
             moveSpeed = runSpeed;
         }
-        else
+        else if (grounded)
         {
+            State = MoveState.walking;
             moveSpeed = walkSpeed;
         }
-
-        ApplyJumpPhysics(inputData.isJumping);
+        else
+        {
+            State = MoveState.air;
+        }
     }
+
 
     void GroundCheck()
     {

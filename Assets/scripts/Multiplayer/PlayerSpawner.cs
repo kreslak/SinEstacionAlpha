@@ -117,8 +117,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             var spawnedPlayer = runner
                 .Spawn(_playerPrefab, spawnPoints[_players.Count].position, Quaternion.identity, player);
-            PlayerMovement playerMovement = spawnedPlayer.GetComponent<PlayerMovement>();
-            _players.Add(player, playerMovement);
+            _players.Add(player, spawnedPlayer);
         }
     }
 
@@ -137,22 +136,13 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         Debug.Log("toque algo");
         var inputData = new NetworkInputData();
-        inputData.moveInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        inputData.moveInput = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         inputData.shootInput = Input.GetMouseButtonDown(0);
         inputData.isJumping = Input.GetKey(KeyCode.Space);
         inputData.isSprinting = Input.GetKey(KeyCode.LeftShift);
 
         input.Set(inputData);
 
-        if (_players.TryGetValue(runner.LocalPlayer, out NetworkObject networkObject))
-        {
-            PlayerMovement playerMovement = networkObject.GetComponent<PlayerMovement>();
-
-            if (playerMovement != null)
-            {
-                playerMovement.ProcessInput(inputData);
-            }
-        }
     }
 
     #region Buttons

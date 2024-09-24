@@ -94,7 +94,8 @@ GameObject:
   - component: {fileID: 7359459026426184631}
   - component: {fileID: 3985703723612831576}
   - component: {fileID: 1681894791552504384}
-  - component: {fileID: 8202417665004035642}
+  - component: {fileID: 2092108048740012058}
+  - component: {fileID: 3384351206220216369}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -134,12 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70c0da4a06b209d4a96b6e52ef1ae328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2857661789
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 8202417665004035642}
   walkSpeed: 7
   runSpeed: 10
   groundDrag: 10
@@ -152,7 +147,7 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
-  orientation: {fileID: 0}
+  orient: {fileID: 0}
 --- !u!54 &1681894791552504384
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -180,7 +175,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8202417665004035642
+--- !u!114 &2092108048740012058
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -189,13 +184,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 722154779252919106}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3352480676
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 3985703723612831576}
+  - {fileID: 3384351206220216369}
+--- !u!114 &3384351206220216369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722154779252919106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
+  SyncParent: 1
+  _interpolationTarget: {fileID: 0}
+  UsePreciseRotation: 0
+  UseRenderSleepThresholds: 1
+  RenderThresholds:
+    UseEnergy: 1
+    Position: 0.01
+    Rotation: 0.01
+    Scale: 0.01
 --- !u!1 &1180973784574234689
 GameObject:
   m_ObjectHideFlags: 0
