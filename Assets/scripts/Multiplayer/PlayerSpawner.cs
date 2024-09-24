@@ -135,6 +135,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        Debug.Log("toque algo");
         var inputData = new NetworkInputData();
         inputData.moveInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         inputData.shootInput = Input.GetMouseButtonDown(0);
@@ -152,7 +153,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
                 playerMovement.ProcessInput(inputData);
             }
         }
-
     }
 
     #region Buttons
