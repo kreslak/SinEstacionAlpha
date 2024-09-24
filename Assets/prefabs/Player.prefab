@@ -147,7 +147,7 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
-  orient: {fileID: 0}
+  orient: {fileID: 6451758220377674862}
 --- !u!54 &1681894791552504384
 Rigidbody:
   m_ObjectHideFlags: 0
