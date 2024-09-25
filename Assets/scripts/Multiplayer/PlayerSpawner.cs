@@ -9,18 +9,20 @@ using UnityEngine.SceneManagement;
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     Dictionary<PlayerRef, NetworkObject> _players = new Dictionary<PlayerRef, NetworkObject>();
-
     [SerializeField] private NetworkObject _playerPrefab;
-
     [SerializeField] Transform[] spawnPoints;
 
-    NetworkRunner _runner;
+    [SerializeField] NetworkObject cameraHold;
 
+    NetworkRunner _runner;
+    void Start()
+    {
+        Camera.main.GetComponent<CameraRot>().enabled = false;
+    }
     async void StartGame(GameMode gameMode)
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
-
 
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
@@ -113,11 +115,17 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     #region OnPlayer Events
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (runner.IsServer)
+        if (runner.IsPlayer)
         {
             var spawnedPlayer = runner
                 .Spawn(_playerPrefab, spawnPoints[_players.Count].position, Quaternion.identity, player);
+            Camera.main.GetComponent<CameraRot>().orient = spawnedPlayer.GetComponent<PlayerMovement>().orient;
+            Camera.main.GetComponent<CameraRot>().enabled = true;
+
             _players.Add(player, spawnedPlayer);
+            Camera.main.GetComponent<CameraRot>().FakeStart();
+            cameraHold.GetComponent<camPos>().cameraPosition = spawnedPlayer.GetComponentInChildren<xdxd>().transform;
+            
         }
     }
 
@@ -142,7 +150,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         inputData.isSprinting = Input.GetKey(KeyCode.LeftShift);
 
         input.Set(inputData);
-
     }
 
     #region Buttons

@@ -25,7 +25,7 @@ public class PlayerMovement : NetworkBehaviour
     public LayerMask whatIsGround;
     bool grounded;
 
-    [SerializeField] Transform orient;
+    public Transform orient;
     Vector3 moveDir;
     Rigidbody rb;
 
@@ -53,11 +53,9 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (GetInput(out NetworkInputData inputData))
         {
-            // Movimiento
             MovePlayer(inputData);
             StateHandler(inputData);
 
-            // Control de salto
             if (inputData.isJumping && canJump && grounded)
             {
                 canJump = false;
